@@ -1,0 +1,2401 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công chứng tài sản - Hệ thống hướng dẫn hồ sơ</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .progress-container {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00b09b, #96c93d);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+
+        .step {
+            text-align: center;
+            flex: 1;
+        }
+
+        .step.active {
+            color: #00b09b;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 30px;
+            min-height: 500px;
+        }
+
+        .form-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        .section-title {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+            font-size: 1.8em;
+        }
+
+        .question-group {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+        }
+
+        .question {
+            margin-bottom: 20px;
+        }
+
+        .question label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .question.required label::after {
+            content: " *";
+            color: #e74c3c;
+        }
+
+        .question input, .question select, .question textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .question input:focus, .question select:focus, .question textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .owner-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .owner-card:hover {
+            border-color: #3498db;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .owner-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .owner-card h3::before {
+            content: "👤";
+            margin-right: 10px;
+        }
+
+        .dynamic-content {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .dynamic-content.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; max-height: 0; }
+            to { opacity: 1; max-height: 500px; }
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-prev {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-prev:hover {
+            background: #5a6268;
+        }
+
+        .btn-next {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-next:hover {
+            background: #2980b9;
+        }
+
+        .btn-guidance {
+            background: #00b09b;
+            color: white;
+        }
+
+        .btn-guidance:hover {
+            background: #009c7b;
+        }
+
+        .btn-reset {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #c0392b;
+        }
+
+        .guidance-phase {
+            display: none;
+        }
+
+        .guidance-result {
+            background: white;
+            border-radius: 10px;
+            padding: 0;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .guidance-header {
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+            color: white;
+            padding: 20px;
+        }
+
+        .guidance-content {
+            padding: 25px;
+        }
+
+        .guidance-item {
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+
+        .guidance-item.info {
+            background: #d1ecf1;
+            border-left-color: #17a2b8;
+        }
+
+        .guidance-item.warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+        }
+
+        .guidance-item.error {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+        }
+
+        .guidance-item.success {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+
+        .date-input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .date-input-group input {
+            flex: 1;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .radio-item input[type="radio"] {
+            width: auto;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 5px;
+            color: #3498db;
+            cursor: help;
+        }
+
+        .tooltip-text {
+            visibility: hidden;
+            width: 300px;
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 14px;
+            font-weight: normal;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .sub-question {
+            margin-left: 20px;
+            padding-left: 15px;
+            border-left: 2px solid #3498db;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+            
+            .date-input-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>HỆ THỐNG HƯỚNG DẪN CÔNG CHỨNG TÀI SẢN</h1>
+            <div class="subtitle">Kịch bản xử lý và hướng dẫn hồ sơ toàn diện</div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-steps">
+                <div class="step active" id="step-A1">Giấy chứng nhận</div>
+                <div class="step" id="step-A2">Tình trạng hôn nhân</div>
+                <div class="step" id="step-A3">Năng lực hành vi</div>
+                <div class="step" id="step-A4">Tổ chức</div>
+                <div class="step" id="step-A5">Ủy quyền</div>
+                <div class="step" id="step-B">Kết quả</div>
+            </div>
+        </div>
+
+        <!-- PHẦN A: HỎI THÔNG TIN -->
+        <div class="content" id="question-phase">
+            
+            <!-- SECTION A1: GIẤY CHỨNG NHẬN -->
+            <div id="section-A1" class="form-section active">
+                <h2 class="section-title">A1. THÔNG TIN GIẤY CHỨNG NHẬN</h2>
+                
+                <div class="question-group">
+                    <div class="question required">
+                        <label>Đã có Giấy chứng nhận QSDĐ/QSHN/Tài sản chưa?</label>
+                        <select id="hasCertificate" onchange="handleHasCertificate()">
+                            <option value="">-- Chọn trạng thái --</option>
+                            <option value="CHUA">CHƯA có GCN</option>
+                            <option value="CO">Đã CÓ GCN</option>
+                        </select>
+                    </div>
+
+                    <div id="certificate-details" class="dynamic-content">
+                        <div class="question required">
+                            <label>Số lượng chủ thể trên Giấy chứng nhận:</label>
+                            <input type="number" id="ownerCount" min="1" max="20" placeholder="Nhập số lượng chủ sở hữu" onchange="handleOwnerCount()">
+                        </div>
+
+                        <div id="owner-forms"></div>
+
+                        <div class="question required">
+                            <label>Nguồn gốc sở hữu tài sản:</label>
+                            <select id="ownershipSource" onchange="handleOwnershipSource()">
+                                <option value="">-- Chọn nguồn gốc --</option>
+                                <option value="MUA_TANG_THUA_KHE_GOP_VON">Mua/được tặng cho/thừa kế/nhận góp vốn/được giao đất/thuê đất</option>
+                                <option value="CONG_NHAN_QSDD">Được nhà nước công nhận QSDĐ</option>
+                            </select>
+                        </div>
+
+                        <div id="ownership-date-container" class="dynamic-content">
+                            <div class="question required">
+                                <label id="ownershipDateLabel">Ngày sở hữu tài sản:</label>
+                                <input type="date" id="ownershipDate" onchange="updateState('ownershipDate', this.value)">
+                                <small class="tooltip">ℹ️
+                                    <span class="tooltip-text" id="ownershipDateTooltip"></span>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button class="btn btn-prev" onclick="previousSection()" disabled>⬅ Quay lại</button>
+                    <button class="btn btn-next" onclick="nextSection()">Tiếp theo ➡</button>
+                </div>
+            </div>
+
+            <!-- SECTION A2: TÌNH TRẠNG HÔN NHÂN -->
+            <div id="section-A2" class="form-section">
+                <h2 class="section-title">A2. TÌNH TRẠNG HÔN NHÂN CỦA CHỦ SỞ HỮU</h2>
+                <div id="marital-status-forms"></div>
+                <div class="navigation">
+                    <button class="btn btn-prev" onclick="previousSection()">⬅ Quay lại</button>
+                    <button class="btn btn-next" onclick="nextSection()">Tiếp theo ➡</button>
+                </div>
+            </div>
+
+            <!-- SECTION A3: NĂNG LỰC HÀNH VI -->
+            <div id="section-A3" class="form-section">
+                <h2 class="section-title">A3. NĂNG LỰC HÀNH VI VÀ GIÁM HỘ</h2>
+                <div id="civil-capacity-forms"></div>
+                <div class="navigation">
+                    <button class="btn btn-prev" onclick="previousSection()">⬅ Quay lại</button>
+                    <button class="btn btn-next" onclick="nextSection()">Tiếp theo ➡</button>
+                </div>
+            </div>
+
+            <!-- SECTION A4: THÔNG TIN TỔ CHỨC -->
+            <div id="section-A4" class="form-section">
+                <h2 class="section-title">A4. THÔNG TIN TỔ CHỨC/DOANH NGHIỆP</h2>
+                <div id="organization-forms"></div>
+                <div class="navigation">
+                    <button class="btn btn-prev" onclick="previousSection()">⬅ Quay lại</button>
+                    <button class="btn btn-next" onclick="nextSection()">Tiếp theo ➡</button>
+                </div>
+            </div>
+
+            <!-- SECTION A5: ỦY QUYỀN -->
+            <div id="section-A5" class="form-section">
+                <h2 class="section-title">A5. THÔNG TIN ỦY QUYỀN</h2>
+                <div id="power-of-attorney-forms"></div>
+                <div class="navigation">
+                    <button class="btn btn-prev" onclick="previousSection()">⬅ Quay lại</button>
+                    <button class="btn btn-guidance" onclick="generateGuidance()">Xem hướng dẫn ➡</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PHẦN B: HƯỚNG DẪN HỒ SƠ -->
+        <div class="content guidance-phase" id="guidance-phase">
+            <div class="guidance-result">
+                <div class="guidance-header">
+                    <h2>KẾT QUẢ HƯỚNG DẪN HỒ SƠ</h2>
+                    <p>Dựa trên thông tin bạn đã cung cấp</p>
+                </div>
+                <div class="guidance-content">
+                    <div id="guidance-results"></div>
+                </div>
+            </div>
+            <div class="navigation">
+                <button class="btn btn-prev" onclick="showQuestionPhase()">⬅ Quay lại sửa thông tin</button>
+                <button class="btn btn-reset" onclick="resetApp()">🔄 Làm lại từ đầu</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===============================
+        // STATE MANAGEMENT
+        // ===============================
+        const appState = {
+            currentSection: 'A1',
+            sections: ['A1', 'A2', 'A3', 'A4', 'A5'],
+            answers: {
+                hasCertificate: null,
+                ownerCount: 0,
+                owners: [],
+                ownershipSource: null,
+                ownershipDate: null,
+                maritalStatus: {},
+                civilCapacity: {
+                    transactionType: null,
+                    ownersLostCapacity: [],
+                    spousesLostCapacity: [],
+                    ownerDocuments: {},
+                    spouseDocuments: {}
+                },
+                organizationInfo: {},
+                powerOfAttorney: {
+                    owners: [],
+                    spouses: [],
+                    ownerInfo: {},
+                    spouseInfo: {}
+                }
+            },
+            guidance: []
+        };
+
+        // ===============================
+        // UTILITY FUNCTIONS
+        // ===============================
+        function updateState(key, value, subKey = null, subSubKey = null) {
+            if (subSubKey) {
+                appState.answers[key][subKey][subSubKey] = value;
+            } else if (subKey) {
+                appState.answers[key][subKey] = value;
+            } else {
+                appState.answers[key] = value;
+            }
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const totalSteps = 6;
+            let completedSteps = 1; // A1 is always started
+
+            // Check which sections are completed
+            if (appState.answers.hasCertificate === 'CO' && appState.answers.ownerCount > 0) completedSteps++;
+            if (Object.keys(appState.answers.maritalStatus).length > 0) completedSteps++;
+            if (appState.answers.civilCapacity.transactionType) completedSteps++;
+            if (Object.keys(appState.answers.organizationInfo).length > 0) completedSteps++;
+            if (appState.answers.powerOfAttorney.owners.length > 0 || appState.answers.powerOfAttorney.spouses.length > 0) completedSteps++;
+
+            const progress = (completedSteps / totalSteps) * 100;
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+
+            // Update step indicators
+            appState.sections.forEach((section, index) => {
+                const stepElement = document.getElementById(`step-${section}`);
+                if (index < completedSteps - 1) {
+                    stepElement.classList.add('active');
+                } else {
+                    stepElement.classList.remove('active');
+                }
+            });
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.form-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(`section-${sectionId}`).classList.add('active');
+            appState.currentSection = sectionId;
+            updateProgress();
+        }
+
+        function nextSection() {
+            const currentIndex = appState.sections.indexOf(appState.currentSection);
+            if (currentIndex < appState.sections.length - 1) {
+                showSection(appState.sections[currentIndex + 1]);
+                // Render dynamic content for next section
+                if (appState.sections[currentIndex + 1] === 'A2') {
+                    renderMaritalStatusForms();
+                } else if (appState.sections[currentIndex + 1] === 'A3') {
+                    renderCivilCapacityForms();
+                } else if (appState.sections[currentIndex + 1] === 'A4') {
+                    renderOrganizationForms();
+                } else if (appState.sections[currentIndex + 1] === 'A5') {
+                    renderPowerOfAttorneyForms();
+                }
+            }
+        }
+
+        function previousSection() {
+            const currentIndex = appState.sections.indexOf(appState.currentSection);
+            if (currentIndex > 0) {
+                showSection(appState.sections[currentIndex - 1]);
+            }
+        }
+
+        // ===============================
+        // SECTION A1: GIẤY CHỨNG NHẬN
+        // ===============================
+        function handleHasCertificate() {
+            const hasCert = document.getElementById('hasCertificate').value;
+            updateState('hasCertificate', hasCert);
+            
+            const certDetails = document.getElementById('certificate-details');
+            if (hasCert === 'CHUA') {
+                certDetails.classList.remove('active');
+            } else if (hasCert === 'CO') {
+                certDetails.classList.add('active');
+            }
+        }
+
+        function handleOwnerCount() {
+            const count = parseInt(document.getElementById('ownerCount').value);
+            if (isNaN(count) || count < 1) return;
+            
+            updateState('ownerCount', count);
+            
+            const ownerForms = document.getElementById('owner-forms');
+            ownerForms.innerHTML = '';
+            
+            for (let i = 0; i < count; i++) {
+                ownerForms.innerHTML += `
+                    <div class="owner-card">
+                        <h3>Chủ sở hữu ${i + 1}</h3>
+                        <div class="question required">
+                            <label>Loại chủ sở hữu:</label>
+                            <select onchange="handleOwnerType(${i}, this.value)">
+                                <option value="">-- Chọn loại --</option>
+                                <option value="CA_NHAN">Cá nhân</option>
+                                <option value="TO_CHUC">Tổ chức/Doanh nghiệp</option>
+                            </select>
+                        </div>
+                        <div id="owner-details-${i}"></div>
+                    </div>
+                `;
+                
+                // Initialize owner object
+                if (!appState.answers.owners[i]) {
+                    appState.answers.owners[i] = { type: null };
+                }
+            }
+        }
+
+        function handleOwnerType(index, type) {
+            appState.answers.owners[index].type = type;
+            const detailsDiv = document.getElementById(`owner-details-${index}`);
+            
+            if (type === 'CA_NHAN') {
+                detailsDiv.innerHTML = `
+                    <div class="question required">
+                        <label>Họ và tên:</label>
+                        <input type="text" placeholder="Nhập họ tên đầy đủ" onchange="updateOwnerField(${index}, 'name', this.value)">
+                    </div>
+                    <div class="question required">
+                        <label>Số CMND/CCCD:</label>
+                        <input type="text" placeholder="9 số (CMND) hoặc 12 số (CCCD)" onchange="updateOwnerField(${index}, 'idNumber', this.value)">
+                    </div>
+                    <div class="question required">
+                        <label>Ngày tháng năm sinh:</label>
+                        <input type="date" onchange="updateOwnerField(${index}, 'birthDate', this.value)">
+                    </div>
+                `;
+            } else if (type === 'TO_CHUC') {
+                detailsDiv.innerHTML = `
+                    <div class="question required">
+                        <label>Tên tổ chức (tiếng Việt):</label>
+                        <input type="text" placeholder="Tên đầy đủ bằng tiếng Việt" onchange="updateOwnerField(${index}, 'orgName', this.value)">
+                    </div>
+                    <div class="question">
+                        <label>Mã số doanh nghiệp/MST/Số ĐKKD:</label>
+                        <input type="text" placeholder="Nhập mã số (nếu có)" onchange="updateOwnerField(${index}, 'businessCode', this.value)">
+                    </div>
+                `;
+            }
+        }
+
+        function updateOwnerField(index, field, value) {
+            if (!appState.answers.owners[index]) {
+                appState.answers.owners[index] = {};
+            }
+            appState.answers.owners[index][field] = value;
+        }
+
+        function handleOwnershipSource() {
+            const source = document.getElementById('ownershipSource').value;
+            updateState('ownershipSource', source);
+            
+            const dateContainer = document.getElementById('ownership-date-container');
+            const tooltip = document.getElementById('ownershipDateTooltip');
+            
+            if (source) {
+                dateContainer.classList.add('active');
+                
+                if (source === 'MUA_TANG_THUA_KHE_GOP_VON') {
+                    document.getElementById('ownershipDateLabel').textContent = 'Ngày sở hữu (ngày đăng ký thay đổi chủ/ngày cấp GCN):';
+                    tooltip.textContent = 'Lấy ngày đăng ký thay đổi chủ; nếu không có ngày đăng ký thay đổi thì lấy ngày cấp GCN';
+                } else if (source === 'CONG_NHAN_QSDD') {
+                    document.getElementById('ownershipDateLabel').textContent = 'Ngày sở hữu (ngày thực tế tạo dựng tài sản):';
+                    tooltip.textContent = 'Không lấy ngày cấp GCN, cung cấp ngày THỰC TẾ tạo dựng tài sản';
+                }
+            } else {
+                dateContainer.classList.remove('active');
+            }
+        }
+
+        // ===============================
+        // SECTION A2: TÌNH TRẠNG HÔN NHÂN
+        // ===============================
+        function renderMaritalStatusForms() {
+            const container = document.getElementById('marital-status-forms');
+            container.innerHTML = '';
+            
+            let hasIndividualOwner = false;
+            
+            appState.answers.owners.forEach((owner, index) => {
+                if (owner.type === 'CA_NHAN') {
+                    hasIndividualOwner = true;
+                    container.innerHTML += `
+                        <div class="owner-card">
+                            <h3>Tình trạng hôn nhân - ${owner.name || `Chủ sở hữu ${index + 1}`}</h3>
+                            <div class="question required">
+                                <label>Tình trạng hôn nhân hiện tại:</label>
+                                <select onchange="handleMaritalStatus(${index}, this.value)">
+                                    <option value="">-- Chọn tình trạng --</option>
+                                    <option value="CHUA_TUNG_KET_HON">CHƯA TỪNG KẾT HÔN</option>
+                                    <option value="DANG_CO_VO_CHONG_LAN_DAU">ĐANG CÓ VỢ/CHỒNG (kết hôn lần đầu)</option>
+                                    <option value="DANG_CO_VO_CHONG_TAI_HON">ĐANG CÓ VỢ/CHỒNG (tái hôn)</option>
+                                    <option value="DOC_THAN_DA_LY_HON">ĐỘC THÂN, ĐÃ LY HÔN</option>
+                                    <option value="DOC_THAN_VO_CHONG_CHET">ĐỘC THÂN, VỢ/CHỒNG ĐÃ CHẾT</option>
+                                </select>
+                            </div>
+                            <div id="marital-details-${index}"></div>
+                        </div>
+                    `;
+                    
+                    // Initialize marital status object
+                    if (!appState.answers.maritalStatus[index]) {
+                        appState.answers.maritalStatus[index] = { status: null };
+                    }
+                }
+            });
+            
+            if (!hasIndividualOwner) {
+                container.innerHTML = '<p>Không có chủ sở hữu cá nhân nào trong danh sách.</p>';
+            }
+        }
+
+        function handleMaritalStatus(ownerIndex, status) {
+            if (!appState.answers.maritalStatus[ownerIndex]) {
+                appState.answers.maritalStatus[ownerIndex] = {};
+            }
+            appState.answers.maritalStatus[ownerIndex].status = status;
+            
+            const detailsDiv = document.getElementById(`marital-details-${ownerIndex}`);
+            detailsDiv.innerHTML = '';
+            
+            switch(status) {
+                case 'CHUA_TUNG_KET_HON':
+                    renderChuaTungKetHon(ownerIndex, detailsDiv);
+                    break;
+                case 'DANG_CO_VO_CHONG_LAN_DAU':
+                    renderDangCoVoChongLanDau(ownerIndex, detailsDiv);
+                    break;
+                case 'DANG_CO_VO_CHONG_TAI_HON':
+                    renderDangCoVoChongTaiHon(ownerIndex, detailsDiv);
+                    break;
+                case 'DOC_THAN_DA_LY_HON':
+                    renderDocThanDaLyHon(ownerIndex, detailsDiv);
+                    break;
+                case 'DOC_THAN_VO_CHONG_CHET':
+                    renderDocThanVoChongChet(ownerIndex, detailsDiv);
+                    break;
+            }
+        }
+
+        function renderChuaTungKetHon(ownerIndex, container) {
+            container.innerHTML = `
+                <div class="question">
+                    <label>Đã có giấy xác nhận tình trạng hôn nhân chưa?</label>
+                    <select onchange="handleChuaTungKetHonDocs(${ownerIndex}, this.value)">
+                        <option value="">-- Chọn --</option>
+                        <option value="CHUA">Chưa có</option>
+                        <option value="DA_CO">Đã có</option>
+                    </select>
+                </div>
+                <div id="chua-tung-ket-hon-details-${ownerIndex}"></div>
+            `;
+        }
+
+        function handleChuaTungKetHonDocs(ownerIndex, hasDoc) {
+            const detailsDiv = document.getElementById(`chua-tung-ket-hon-details-${ownerIndex}`);
+            
+            if (hasDoc === 'DA_CO') {
+                detailsDiv.innerHTML = `
+                    <div class="question required">
+                        <label>Nội dung ghi trong giấy xác nhận tình trạng hôn nhân:</label>
+                        <select onchange="updateMaritalField(${ownerIndex}, 'xntthnContent', this.value)">
+                            <option value="">-- Chọn nội dung --</option>
+                            <option value="CHI_HIEN_TAI">Chỉ có nội dung "hiện tại chưa kết hôn với ai"</option>
+                            <option value="VUA_CO_KHOANG_THOI_GIAN">Vừa có nội dung "từ ngày ..... đến... chưa kết hôn với ai" và "hiện tại chưa kết hôn với ai"</option>
+                        </select>
+                    </div>
+                    <div class="question required">
+                        <label>Ngày cấp giấy xác nhận tình trạng hôn nhân:</label>
+                        <input type="date" onchange="updateMaritalField(${ownerIndex}, 'xntthnDate', this.value)">
+                    </div>
+                `;
+            } else {
+                detailsDiv.innerHTML = '';
+            }
+            updateMaritalField(ownerIndex, 'hasXNTTHN', hasDoc);
+        }
+
+        function renderDangCoVoChongLanDau(ownerIndex, container) {
+            container.innerHTML = `
+                <div class="question">
+                    <label>Giấy tờ hiện có:</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="gcnkh-${ownerIndex}" onchange="handleDangCoVoChongDocs(${ownerIndex})">
+                            <label for="gcnkh-${ownerIndex}">Có Giấy chứng nhận kết hôn</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="xntthn-${ownerIndex}" onchange="handleDangCoVoChongDocs(${ownerIndex})">
+                            <label for="xntthn-${ownerIndex}">Có giấy xác nhận tình trạng hôn nhân</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="chua-co-${ownerIndex}" onchange="handleDangCoVoChongDocs(${ownerIndex})">
+                            <label for="chua-co-${ownerIndex}">Chưa có giấy tờ</label>
+                        </div>
+                    </div>
+                </div>
+                <div id="dang-co-vo-chong-details-${ownerIndex}"></div>
+            `;
+        }
+
+        function handleDangCoVoChongDocs(ownerIndex) {
+            const hasGCNKH = document.getElementById(`gcnkh-${ownerIndex}`).checked;
+            const hasXNTTTHN = document.getElementById(`xntthn-${ownerIndex}`).checked;
+            const hasNone = document.getElementById(`chua-co-${ownerIndex}`).checked;
+            
+            const detailsDiv = document.getElementById(`dang-co-vo-chong-details-${ownerIndex}`);
+            let html = '';
+            
+            if (hasGCNKH) {
+                html += `
+                    <div class="dynamic-content active">
+                        <h4>Thông tin Giấy chứng nhận kết hôn</h4>
+                        <div class="question required">
+                            <label>Ngày hôn nhân có hiệu lực:</label>
+                            <select onchange="updateMaritalField(${ownerIndex}, 'effectiveDateType', this.value)">
+                                <option value="">-- Chọn loại ngày --</option>
+                                <option value="NGAY_DANG_KY">Ngày đăng ký kết hôn</option>
+                                <option value="NGAY_CONG_NHAN">Ngày được công nhận ghi tại Mục Ghi chú của ĐKKH</option>
+                            </select>
+                        </div>
+                        <div class="question required">
+                            <label>Ngày hôn nhân có hiệu lực:</label>
+                            <input type="date" onchange="updateMaritalField(${ownerIndex}, 'effectiveDate', this.value)">
+                        </div>
+                        <div class="question required">
+                            <label>Họ tên vợ/chồng:</label>
+                            <input type="text" onchange="updateMaritalField(${ownerIndex}, 'spouseName', this.value)">
+                        </div>
+                        <div class="question">
+                            <label>Số định danh của vợ/chồng:</label>
+                            <input type="text" onchange="updateMaritalField(${ownerIndex}, 'spouseId', this.value)">
+                        </div>
+                    </div>
+                `;
+            }
+            
+            if (hasXNTTTHN) {
+                html += `
+                    <div class="dynamic-content active">
+                        <h4>Thông tin Giấy xác nhận tình trạng hôn nhân</h4>
+                        <div class="question required">
+                            <label>Ngày cấp giấy xác nhận:</label>
+                            <input type="date" onchange="updateMaritalField(${ownerIndex}, 'xntthnDate2', this.value)">
+                        </div>
+                        <div class="question required">
+                            <label>Nội dung ghi trong giấy xác nhận:</label>
+                            <select onchange="updateMaritalField(${ownerIndex}, 'xntthnContent2', this.value)">
+                                <option value="">-- Chọn nội dung --</option>
+                                <option value="CHI_HIEN_TAI">Chỉ có nội dung "hiện tại chưa kết hôn với ai"</option>
+                                <option value="VUA_CO_KHOANG_THOI_GIAN">Vừa có nội dung khoảng thời gian và "hiện tại chưa kết hôn với ai"</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            detailsDiv.innerHTML = html;
+            
+            // Update state
+            updateMaritalField(ownerIndex, 'hasGCNKH', hasGCNKH);
+            updateMaritalField(ownerIndex, 'hasXNTTTHN', hasXNTTTHN);
+            updateMaritalField(ownerIndex, 'hasNoDocs', hasNone);
+        }
+
+        function renderDangCoVoChongTaiHon(ownerIndex, container) {
+            container.innerHTML = `
+                <div class="question required">
+                    <label>Lý do kết thúc cuộc hôn nhân trước đây:</label>
+                    <select onchange="handleLyDoKetThucHonNhan(${ownerIndex}, this.value)">
+                        <option value="">-- Chọn lý do --</option>
+                        <option value="LY_HON">Ly hôn</option>
+                        <option value="VO_CHONG_CU_CHET">Vợ/chồng cũ chết</option>
+                    </select>
+                </div>
+                <div id="ly-do-ket-thuc-details-${ownerIndex}"></div>
+                <div class="question">
+                    <label>Giấy tờ hiện có về hôn nhân:</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="gcnkh-hientai-${ownerIndex}" onchange="handleTaiHonDocs(${ownerIndex})">
+                            <label for="gcnkh-hientai-${ownerIndex}">Có Giấy chứng nhận kết hôn (của hôn nhân hiện tại)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="xntthn-truockethon-${ownerIndex}" onchange="handleTaiHonDocs(${ownerIndex})">
+                            <label for="xntthn-truockethon-${ownerIndex}">Có giấy xác nhận tình trạng hôn nhân (cho giai đoạn trước kết hôn)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="chua-co-taihon-${ownerIndex}" onchange="handleTaiHonDocs(${ownerIndex})">
+                            <label for="chua-co-taihon-${ownerIndex}">Chưa có giấy tờ</label>
+                        </div>
+                    </div>
+                </div>
+                <div id="tai-hon-details-${ownerIndex}"></div>
+            `;
+        }
+
+        function handleLyDoKetThucHonNhan(ownerIndex, reason) {
+            const detailsDiv = document.getElementById(`ly-do-ket-thuc-details-${ownerIndex}`);
+            updateMaritalField(ownerIndex, 'previousMarriageEndReason', reason);
+            
+            if (reason === 'LY_HON') {
+                detailsDiv.innerHTML = `
+                    <div class="sub-question">
+                        <div class="question required">
+                            <label>Ngày ly hôn:</label>
+                            <input type="date" onchange="updateMaritalField(${ownerIndex}, 'divorceDate', this.value)">
+                        </div>
+                        <div class="question required">
+                            <label>Họ tên vợ/chồng cũ:</label>
+                            <input type="text" onchange="updateMaritalField(${ownerIndex}, 'exSpouseName', this.value)">
+                        </div>
+                        <div class="question">
+                            <label>Số định danh vợ/chồng cũ:</label>
+                            <input type="text" onchange="updateMaritalField(${ownerIndex}, 'exSpouseId', this.value)">
+                        </div>
+                    </div>
+                `;
+            } else if (reason === 'VO_CHONG_CU_CHET') {
+                detailsDiv.innerHTML = `
+                    <div class="sub-question">
+                        <div class="question required">
+                            <label>Ngày chết của vợ/chồng cũ:</label>
+                            <input type="date" onchange="updateMaritalField(${ownerIndex}, 'exSpouseDeathDate', this.value)">
+                        </div>
+                        <div class="question required">
+                            <label>Họ tên vợ/chồng cũ:</label>
+                            <input type="text" onchange="updateMaritalField(${ownerIndex}, 'exSpouseName', this.value)">
+                        </div>
+                        <div class="question">
+                            <label>Số định danh vợ/chồng cũ:</label>
+                            <input type="text" onchange="updateMaritalField(${ownerIndex}, 'exSpouseId', this.value)">
+                        </div>
+                    </div>
+                `;
+            } else {
+                detailsDiv.innerHTML = '';
+            }
+        }
+
+        function handleTaiHonDocs(ownerIndex) {
+            const hasGCNKH = document.getElementById(`gcnkh-hientai-${ownerIndex}`).checked;
+            const hasXNTTTHN = document.getElementById(`xntthn-truockethon-${ownerIndex}`).checked;
+            const hasNone = document.getElementById(`chua-co-taihon-${ownerIndex}`).checked;
+            
+            const detailsDiv = document.getElementById(`tai-hon-details-${ownerIndex}`);
+            let html = '';
+            
+            if (hasGCNKH) {
+                html += `
+                    <div class="dynamic-content active">
+                        <h4>Thông tin Giấy chứng nhận kết hôn hiện tại</h4>
+                        <div class="question required">
+                            <label>Ngày hôn nhân có hiệu lực:</label>
+                            <select onchange="updateMaritalField(${ownerIndex}, 'currentMarriageEffectiveDateType', this.value)">
+                                <option value="">-- Chọn loại ngày --</option>
+                                <option value="NGAY_DANG_KY">Ngày đăng ký kết hôn</option>
+                                <option value="NGAY_CONG_NHAN">Ngày được công nhận ghi tại Mục Ghi chú của ĐKKH</option>
+                            </select>
+                        </div>
+                        <div class="question required">
+                            <label>Ngày hôn nhân có hiệu lực:</label>
+                            <input type="date" onchange="updateMaritalField(${ownerIndex}, 'currentMarriageEffectiveDate', this.value)">
+                        </div>
+                        <div class="question required">
+                            <label>Họ tên vợ/chồng hiện tại:</label>
+                            <input type="text" onchange="updateMaritalField(${ownerIndex}, 'currentSpouseName', this.value)">
+                        </div>
+                        <div class="question">
+                            <label>Số định danh vợ/chồng hiện tại:</label>
+                            <input type="text" onchange="updateMaritalField(${ownerIndex}, 'currentSpouseId', this.value)">
+                        </div>
+                    </div>
+                `;
+            }
+            
+            if (hasXNTTTHN) {
+                html += `
+                    <div class="dynamic-content active">
+                        <h4>Thông tin Giấy xác nhận tình trạng hôn nhân trước kết hôn</h4>
+                        <div class="question required">
+                            <label>Ngày cấp giấy xác nhận:</label>
+                            <input type="date" onchange="updateMaritalField(${ownerIndex}, 'preMarriageXNTTHNDate', this.value)">
+                        </div>
+                        <div class="question required">
+                            <label>"KHOẢNG THỜI GIAN được xác nhận" có tính từ thời điểm Ly hôn/chết của vợ/chồng không?</label>
+                            <select onchange="updateMaritalField(${ownerIndex}, 'preMarriageTimeFromEvent', this.value)">
+                                <option value="">-- Chọn --</option>
+                                <option value="CO">Có</option>
+                                <option value="KHONG">Không</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Special case: Only XNTTHN selected
+            if (hasXNTTTHN && !hasGCNKH && !hasNone) {
+                html += `
+                    <div class="dynamic-content active">
+                        <h4>Thông tin bổ sung (chỉ có XNTTHN)</h4>
+                        <div class="question required">
+                            <label>Ngày hôn nhân có hiệu lực:</label>
+                            <input type="date" onchange="updateMaritalField(${ownerIndex}, 'marriageEffectiveDateXNTTHNOnly', this.value)">
+                        </div>
+                        <div class="question required">
+                            <label>Họ tên vợ/chồng:</label>
+                            <input type="text" onchange="updateMaritalField(${ownerIndex}, 'spouseNameXNTTHNOnly', this.value)">
+                        </div>
+                        <div class="question">
+                            <label>Số định danh vợ/chồng:</label>
+                            <input type="text" onchange="updateMaritalField(${ownerIndex}, 'spouseIdXNTTHNOnly', this.value)">
+                        </div>
+                    </div>
+                `;
+            }
+            
+            detailsDiv.innerHTML = html;
+            
+            // Update state
+            updateMaritalField(ownerIndex, 'hasCurrentGCNKH', hasGCNKH);
+            updateMaritalField(ownerIndex, 'hasPreMarriageXNTTTHN', hasXNTTTHN);
+            updateMaritalField(ownerIndex, 'hasNoDocsTaiHon', hasNone);
+        }
+
+        function renderDocThanDaLyHon(ownerIndex, container) {
+            container.innerHTML = `
+                <div class="question">
+                    <label>Đã có giấy xác nhận tình trạng hôn nhân chưa?</label>
+                    <select onchange="handleDocThanDaLyHonDocs(${ownerIndex}, this.value)">
+                        <option value="">-- Chọn --</option>
+                        <option value="CHUA_CO">Chưa có</option>
+                        <option value="DA_CO">Đã có</option>
+                    </select>
+                </div>
+                <div id="doc-than-ly-hon-details-${ownerIndex}"></div>
+                <div class="question required">
+                    <label>Tài sản đang yêu cầu công chứng có phải tài sản chung với vợ chồng cũ không?</label>
+                    <select onchange="updateMaritalField(${ownerIndex}, 'isPropertyWithExSpouse', this.value)">
+                        <option value="">-- Chọn --</option>
+                        <option value="CO">Có</option>
+                        <option value="KHONG">Không</option>
+                    </select>
+                </div>
+            `;
+        }
+
+        function handleDocThanDaLyHonDocs(ownerIndex, hasDoc) {
+            const detailsDiv = document.getElementById(`doc-than-ly-hon-details-${ownerIndex}`);
+            updateMaritalField(ownerIndex, 'hasXNTTHN_LyHon', hasDoc);
+            
+            if (hasDoc === 'CHUA_CO') {
+                detailsDiv.innerHTML = `
+                    <div class="sub-question">
+                        <div class="question required">
+                            <label>Ngày ly hôn:</label>
+                            <input type="date" onchange="updateMaritalField(${ownerIndex}, 'divorceDate_LyHon', this.value)">
+                        </div>
+                        <div class="question required">
+                            <label>Họ tên vợ/chồng cũ:</label>
+                            <input type="text" onchange="updateMaritalField(${ownerIndex}, 'exSpouseName_LyHon', this.value)">
+                        </div>
+                        <div class="question">
+                            <label>Số định danh vợ/chồng cũ:</label>
+                            <input type="text" onchange="updateMaritalField(${ownerIndex}, 'exSpouseId_LyHon', this.value)">
+                        </div>
+                    </div>
+                `;
+            } else if (hasDoc === 'DA_CO') {
+                detailsDiv.innerHTML = `
+                    <div class="sub-question">
+                        <div class="question required">
+                            <label>Ngày cấp giấy xác nhận tình trạng hôn nhân:</label>
+                            <input type="date" onchange="updateMaritalField(${ownerIndex}, 'xntthnDate_LyHon', this.value)">
+                        </div>
+                        <div class="question required">
+                            <label>"KHOẢNG THỜI GIAN được xác nhận" có tính từ thời điểm Ly hôn không?</label>
+                            <select onchange="updateMaritalField(${ownerIndex}, 'xntthnTimeFromDivorce', this.value)">
+                                <option value="">-- Chọn --</option>
+                                <option value="CO">Có</option>
+                                <option value="KHONG">Không</option>
+                            </select>
+                        </div>
+                        <div class="question required">
+                            <label>Ngày ly hôn được ghi trong giấy xác nhận:</label>
+                            <input type="date" onchange="updateMaritalField(${ownerIndex}, 'divorceDateInXNTTHN', this.value)">
+                        </div>
+                        <div class="question required">
+                            <label>Họ tên vợ/chồng cũ:</label>
+                            <input type="text" onchange="updateMaritalField(${ownerIndex}, 'exSpouseNameInXNTTHN', this.value)">
+                        </div>
+                        <div class="question">
+                            <label>Số định danh vợ/chồng cũ:</label>
+                            <input type="text" onchange="updateMaritalField(${ownerIndex}, 'exSpouseIdInXNTTHN', this.value)">
+                        </div>
+                    </div>
+                `;
+            } else {
+                detailsDiv.innerHTML = '';
+            }
+        }
+
+        function renderDocThanVoChongChet(ownerIndex, container) {
+            container.innerHTML = `
+                <div class="question">
+                    <label>Đã có giấy xác nhận tình trạng hôn nhân chưa?</label>
+                    <select onchange="handleDocThanVoChongChetDocs(${ownerIndex}, this.value)">
+                        <option value="">-- Chọn --</option>
+                        <option value="CHUA_CO">Chưa có</option>
+                        <option value="DA_CO">Đã có</option>
+                    </select>
+                </div>
+                <div id="doc-than-chet-details-${ownerIndex}"></div>
+            `;
+        }
+
+        function handleDocThanVoChongChetDocs(ownerIndex, hasDoc) {
+            const detailsDiv = document.getElementById(`doc-than-chet-details-${ownerIndex}`);
+            updateMaritalField(ownerIndex, 'hasXNTTHN_Chet', hasDoc);
+            
+            if (hasDoc === 'CHUA_CO') {
+                detailsDiv.innerHTML = `
+                    <div class="sub-question">
+                        <div class="question required">
+                            <label>Ngày chết của vợ/chồng:</label>
+                            <input type="date" onchange="updateMaritalField(${ownerIndex}, 'spouseDeathDate', this.value)">
+                        </div>
+                        <div class="question required">
+                            <label>Họ tên vợ/chồng đã chết:</label>
+                            <input type="text" onchange="updateMaritalField(${ownerIndex}, 'deceasedSpouseName', this.value)">
+                        </div>
+                        <div class="question">
+                            <label>Số định danh vợ/chồng đã chết:</label>
+                            <input type="text" onchange="updateMaritalField(${ownerIndex}, 'deceasedSpouseId', this.value)">
+                        </div>
+                    </div>
+                `;
+            } else if (hasDoc === 'DA_CO') {
+                detailsDiv.innerHTML = `
+                    <div class="sub-question">
+                        <div class="question required">
+                            <label>Ngày cấp giấy xác nhận tình trạng hôn nhân:</label>
+                            <input type="date" onchange="updateMaritalField(${ownerIndex}, 'xntthnDate_Chet', this.value)">
+                        </div>
+                        <div class="question required">
+                            <label>"KHOẢNG THỜI GIAN được xác nhận" có tính từ thời điểm chết của vợ/chồng không?</label>
+                            <select onchange="updateMaritalField(${ownerIndex}, 'xntthnTimeFromDeath', this.value)">
+                                <option value="">-- Chọn --</option>
+                                <option value="CO">Có</option>
+                                <option value="KHONG">Không</option>
+                            </select>
+                        </div>
+                        <div class="question required">
+                            <label>Ngày chết được ghi trong giấy xác nhận:</label>
+                            <input type="date" onchange="updateMaritalField(${ownerIndex}, 'deathDateInXNTTHN', this.value)">
+                        </div>
+                        <div class="question required">
+                            <label>Họ tên vợ/chồng đã chết:</label>
+                            <input type="text" onchange="updateMaritalField(${ownerIndex}, 'deceasedSpouseNameInXNTTHN', this.value)">
+                        </div>
+                        <div class="question">
+                            <label>Số định danh vợ/chồng đã chết:</label>
+                            <input type="text" onchange="updateMaritalField(${ownerIndex}, 'deceasedSpouseIdInXNTTHN', this.value)">
+                        </div>
+                    </div>
+                `;
+            } else {
+                detailsDiv.innerHTML = '';
+            }
+        }
+
+        function updateMaritalField(ownerIndex, field, value) {
+            if (!appState.answers.maritalStatus[ownerIndex]) {
+                appState.answers.maritalStatus[ownerIndex] = {};
+            }
+            appState.answers.maritalStatus[ownerIndex][field] = value;
+        }
+
+        // ===============================
+        // SECTION A3: NĂNG LỰC HÀNH VI
+        // ===============================
+        function renderCivilCapacityForms() {
+            const container = document.getElementById('civil-capacity-forms');
+            container.innerHTML = '';
+            
+            // Loại giao dịch
+            container.innerHTML += `
+                <div class="question-group">
+                    <h3>Thông tin giao dịch</h3>
+                    <div class="question required">
+                        <label>Loại giao dịch dự định thực hiện:</label>
+                        <select onchange="updateState('civilCapacity', this.value, 'transactionType')">
+                            <option value="">-- Chọn loại giao dịch --</option>
+                            <option value="TANG_CHO">Tặng cho</option>
+                            <option value="BAN">Bán</option>
+                            <option value="CHUYEN_NHUONG">Chuyển nhượng</option>
+                            <option value="GOP_VON">Góp vốn</option>
+                            <option value="THE_CHAP">Thế chấp</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+            
+            // Chủ sở hữu mất năng lực hành vi
+            container.innerHTML += `
+                <div class="question-group">
+                    <h3>Năng lực hành vi của chủ sở hữu</h3>
+                    <div class="question required">
+                        <label>Chủ sở hữu có bị mất năng lực hành vi không?</label>
+                        <select onchange="handleOwnerLostCapacity(this.value)">
+                            <option value="">-- Chọn --</option>
+                            <option value="CO">Có</option>
+                            <option value="KHONG">Không</option>
+                        </select>
+                    </div>
+                    <div id="owner-lost-capacity-details"></div>
+                </div>
+            `;
+            
+            // Vợ/chồng chủ sở hữu mất năng lực hành vi
+            container.innerHTML += `
+                <div class="question-group">
+                    <h3>Năng lực hành vi của vợ/chồng chủ sở hữu</h3>
+                    <div class="question required">
+                        <label>Vợ/chồng của chủ sở hữu có bị mất năng lực hành vi không?</label>
+                        <select onchange="handleSpouseLostCapacity(this.value)">
+                            <option value="">-- Chọn --</option>
+                            <option value="CO">Có</option>
+                            <option value="KHONG">Không</option>
+                        </select>
+                    </div>
+                    <div id="spouse-lost-capacity-details"></div>
+                </div>
+            `;
+        }
+
+        function handleOwnerLostCapacity(hasLostCapacity) {
+            const detailsDiv = document.getElementById('owner-lost-capacity-details');
+            updateState('civilCapacity', hasLostCapacity === 'CO', 'hasOwnerLostCapacity');
+            
+            if (hasLostCapacity === 'CO') {
+                let html = '<div class="dynamic-content active">';
+                
+                // Chọn chủ sở hữu bị mất NLHV
+                html += `<div class="question required">
+                    <label>Chọn chủ sở hữu bị mất năng lực hành vi:</label>
+                    <div class="checkbox-group">`;
+                
+                appState.answers.owners.forEach((owner, index) => {
+                    if (owner.type === 'CA_NHAN') {
+                        html += `<div class="checkbox-item">
+                            <input type="checkbox" id="owner-capacity-${index}" onchange="handleLostCapacitySelection('owners', ${index}, this.checked)">
+                            <label for="owner-capacity-${index}">${owner.name || `Chủ sở hữu ${index + 1}`}</label>
+                        </div>`;
+                    }
+                });
+                
+                html += `</div></div>`;
+                
+                // Giấy tờ giám hộ (chung cho tất cả chủ sở hữu được chọn)
+                html += `
+                    <div class="question">
+                        <label>Giấy trích lục đăng ký giám hộ:</label>
+                        <select onchange="updateState('civilCapacity', this.value, 'ownerDocuments', 'hasGuardianCert')">
+                            <option value="">-- Chọn --</option>
+                            <option value="CO">Có</option>
+                            <option value="CHUA">Chưa có</option>
+                        </select>
+                    </div>
+                    <div class="question">
+                        <label>Giấy trích lục đăng ký giám sát giám hộ:</label>
+                        <select onchange="updateState('civilCapacity', this.value, 'ownerDocuments', 'hasSupervisorCert')">
+                            <option value="">-- Chọn --</option>
+                            <option value="CO">Có</option>
+                            <option value="CHUA">Chưa có</option>
+                        </select>
+                    </div>
+                    <div class="question">
+                        <label>Văn bản đồng ý cho định đoạt của người giám sát giám hộ:</label>
+                        <select onchange="handleGuardianAgreement('owner', this.value)">
+                            <option value="">-- Chọn --</option>
+                            <option value="CO">Có</option>
+                            <option value="CHUA">Chưa có</option>
+                        </select>
+                    </div>
+                    <div id="owner-guardian-agreement-details"></div>
+                </div>`;
+                
+                detailsDiv.innerHTML = html;
+            } else {
+                detailsDiv.innerHTML = '';
+            }
+        }
+
+        function handleLostCapacitySelection(type, index, isSelected) {
+            const array = type === 'owners' ? appState.answers.civilCapacity.ownersLostCapacity : appState.answers.civilCapacity.spousesLostCapacity;
+            
+            if (isSelected) {
+                if (!array.includes(index)) array.push(index);
+            } else {
+                const pos = array.indexOf(index);
+                if (pos > -1) array.splice(pos, 1);
+            }
+        }
+
+        function handleGuardianAgreement(who, hasAgreement) {
+            const detailsDiv = document.getElementById(`${who}-guardian-agreement-details`);
+            updateState('civilCapacity', hasAgreement, `${who}Documents`, 'hasGuardianAgreement');
+            
+            if (hasAgreement === 'CO') {
+                detailsDiv.innerHTML = `
+                    <div class="question">
+                        <label>Hình thức chứng văn bản đồng ý:</label>
+                        <select onchange="updateState('civilCapacity', this.value, '${who}Documents', 'agreementForm')">
+                            <option value="">-- Chọn --</option>
+                            <option value="CHUNG_THUC_CHU_KY">Chứng thực chữ ký</option>
+                            <option value="CONG_CHUNG">Công chứng</option>
+                            <option value="CHUA_CHUNG">Chưa được chứng</option>
+                        </select>
+                    </div>
+                `;
+            } else {
+                detailsDiv.innerHTML = '';
+            }
+        }
+
+        function handleSpouseLostCapacity(hasLostCapacity) {
+            const detailsDiv = document.getElementById('spouse-lost-capacity-details');
+            updateState('civilCapacity', hasLostCapacity === 'CO', 'hasSpouseLostCapacity');
+            
+            if (hasLostCapacity === 'CO') {
+                let html = '<div class="dynamic-content active">';
+                
+                // Chọn chủ sở hữu có vợ/chồng bị mất NLHV
+                html += `<div class="question required">
+                    <label>Chọn chủ sở hữu có vợ/chồng bị mất năng lực hành vi:</label>
+                    <div class="checkbox-group">`;
+                
+                appState.answers.owners.forEach((owner, index) => {
+                    if (owner.type === 'CA_NHAN') {
+                        html += `<div class="checkbox-item">
+                            <input type="checkbox" id="spouse-capacity-${index}" onchange="handleLostCapacitySelection('spouses', ${index}, this.checked)">
+                            <label for="spouse-capacity-${index}">${owner.name || `Chủ sở hữu ${index + 1}`}</label>
+                        </div>`;
+                    }
+                });
+                
+                html += `</div></div>`;
+                
+                // Giấy tờ giám hộ cho vợ/chồng
+                html += `
+                    <div class="question">
+                        <label>Giấy trích lục đăng ký giám hộ (của vợ/chồng):</label>
+                        <select onchange="updateState('civilCapacity', this.value, 'spouseDocuments', 'hasGuardianCert')">
+                            <option value="">-- Chọn --</option>
+                            <option value="CO">Có</option>
+                            <option value="CHUA">Chưa có</option>
+                        </select>
+                    </div>
+                    <div class="question">
+                        <label>Giấy trích lục đăng ký giám sát giám hộ (của vợ/chồng):</label>
+                        <select onchange="updateState('civilCapacity', this.value, 'spouseDocuments', 'hasSupervisorCert')">
+                            <option value="">-- Chọn --</option>
+                            <option value="CO">Có</option>
+                            <option value="CHUA">Chưa có</option>
+                        </select>
+                    </div>
+                    <div class="question">
+                        <label>Văn bản đồng ý cho định đoạt của người giám sát giám hộ (của vợ/chồng):</label>
+                        <select onchange="handleGuardianAgreement('spouse', this.value)">
+                            <option value="">-- Chọn --</option>
+                            <option value="CO">Có</option>
+                            <option value="CHUA">Chưa có</option>
+                        </select>
+                    </div>
+                    <div id="spouse-guardian-agreement-details"></div>
+                </div>`;
+                
+                detailsDiv.innerHTML = html;
+            } else {
+                detailsDiv.innerHTML = '';
+            }
+        }
+
+        // ===============================
+        // SECTION A4: THÔNG TIN TỔ CHỨC
+        // ===============================
+        function renderOrganizationForms() {
+            const container = document.getElementById('organization-forms');
+            container.innerHTML = '';
+            
+            let hasOrganization = false;
+            
+            appState.answers.owners.forEach((owner, index) => {
+                if (owner.type === 'TO_CHUC') {
+                    hasOrganization = true;
+                    container.innerHTML += `
+                        <div class="owner-card">
+                            <h3>Thông tin tổ chức - ${owner.orgName || `Tổ chức ${index + 1}`}</h3>
+                            <div class="question">
+                                <label>Giấy tờ pháp nhân:</label>
+                                <div class="checkbox-group">
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="dkkd-${index}" onchange="handleOrganizationDocs(${index})">
+                                        <label for="dkkd-${index}">Đăng ký kinh doanh</label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="quyet-dinh-${index}" onchange="handleOrganizationDocs(${index})">
+                                        <label for="quyet-dinh-${index}">Quyết định/giấy phép thành lập</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="question required">
+                                <label>Họ tên người đại diện theo pháp luật:</label>
+                                <input type="text" onchange="updateOrganizationField(${index}, 'legalRepName', this.value)">
+                            </div>
+                            <div class="question">
+                                <label>Số định danh người đại diện theo pháp luật:</label>
+                                <input type="text" onchange="updateOrganizationField(${index}, 'legalRepId', this.value)">
+                            </div>
+                            <div class="question required">
+                                <label>Chức danh người đại diện theo pháp luật:</label>
+                                <select onchange="updateOrganizationField(${index}, 'legalRepTitle', this.value)">
+                                    <option value="">-- Chọn --</option>
+                                    <option value="GIAM_DOC">Giám đốc/Tổng giám đốc</option>
+                                    <option value="CHU_TICH_HDTV">Chủ tịch Hội đồng thành viên</option>
+                                    <option value="CHU_TICH_HDQT">Chủ tịch Hội đồng quản trị</option>
+                                    <option value="CHU_TICH_CTY">Chủ tịch công ty</option>
+                                </select>
+                            </div>
+                            <div class="question required">
+                                <label>Người trực tiếp ký giao dịch:</label>
+                                <select onchange="updateOrganizationField(${index}, 'signatory', this.value)">
+                                    <option value="">-- Chọn --</option>
+                                    <option value="DAI_DIEN_PHAP_LUAT">Người đại diện theo pháp luật</option>
+                                    <option value="DAI_DIEN_UY_QUYEN">Người đại diện theo ủy quyền</option>
+                                </select>
+                            </div>
+                            <div class="question required">
+                                <label>Phê duyệt/chấp nhận của tổ chức đối với giao dịch:</label>
+                                <select onchange="updateOrganizationField(${index}, 'approval', this.value)">
+                                    <option value="">-- Chọn --</option>
+                                    <option value="DA_CO">Đã có Biên bản/Nghị quyết/quyết định</option>
+                                    <option value="CHUA_CO">Chưa có</option>
+                                </select>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Initialize organization info
+                    if (!appState.answers.organizationInfo[index]) {
+                        appState.answers.organizationInfo[index] = {};
+                    }
+                }
+            });
+            
+            if (!hasOrganization) {
+                container.innerHTML = '<p>Không có tổ chức/doanh nghiệp nào trong danh sách chủ sở hữu.</p>';
+            }
+        }
+
+        function handleOrganizationDocs(orgIndex) {
+            const hasDKKD = document.getElementById(`dkkd-${orgIndex}`).checked;
+            const hasQuyetDinh = document.getElementById(`quyet-dinh-${orgIndex}`).checked;
+            
+            if (!appState.answers.organizationInfo[orgIndex]) {
+                appState.answers.organizationInfo[orgIndex] = {};
+            }
+            
+            appState.answers.organizationInfo[orgIndex].hasDKKD = hasDKKD;
+            appState.answers.organizationInfo[orgIndex].hasQuyetDinh = hasQuyetDinh;
+        }
+
+        function updateOrganizationField(orgIndex, field, value) {
+            if (!appState.answers.organizationInfo[orgIndex]) {
+                appState.answers.organizationInfo[orgIndex] = {};
+            }
+            appState.answers.organizationInfo[orgIndex][field] = value;
+        }
+
+        // ===============================
+        // SECTION A5: ỦY QUYỀN
+        // ===============================
+        function renderPowerOfAttorneyForms() {
+            const container = document.getElementById('power-of-attorney-forms');
+            container.innerHTML = '';
+            
+            // Ủy quyền của chủ sở hữu
+            container.innerHTML += `
+                <div class="question-group">
+                    <h3>Ủy quyền của chủ sở hữu</h3>
+                    <div class="question required">
+                        <label>Chủ sở hữu đã ủy quyền cho người khác?</label>
+                        <select onchange="handleOwnerPowerOfAttorney(this.value)">
+                            <option value="">-- Chọn --</option>
+                            <option value="CO">Có</option>
+                            <option value="CHUA">Chưa có</option>
+                        </select>
+                    </div>
+                    <div id="owner-power-of-attorney-details"></div>
+                </div>
+            `;
+            
+            // Ủy quyền của vợ/chồng chủ sở hữu
+            container.innerHTML += `
+                <div class="question-group">
+                    <h3>Ủy quyền của vợ/chồng chủ sở hữu</h3>
+                    <div class="question required">
+                        <label>Vợ/chồng chủ sở hữu đã ủy quyền cho người khác?</label>
+                        <select onchange="handleSpousePowerOfAttorney(this.value)">
+                            <option value="">-- Chọn --</option>
+                            <option value="CO">Có</option>
+                            <option value="CHUA">Chưa có</option>
+                        </select>
+                    </div>
+                    <div id="spouse-power-of-attorney-details"></div>
+                </div>
+            `;
+        }
+
+        function handleOwnerPowerOfAttorney(hasPOA) {
+            const detailsDiv = document.getElementById('owner-power-of-attorney-details');
+            updateState('powerOfAttorney', hasPOA === 'CO', 'hasOwnerPOA');
+            
+            if (hasPOA === 'CO') {
+                let html = '<div class="dynamic-content active">';
+                
+                // Chọn chủ sở hữu có ủy quyền
+                html += `<div class="question required">
+                    <label>Chọn chủ sở hữu đã ủy quyền:</label>
+                    <div class="checkbox-group">`;
+                
+                appState.answers.owners.forEach((owner, index) => {
+                    if (owner.type === 'CA_NHAN') {
+                        html += `<div class="checkbox-item">
+                            <input type="checkbox" id="owner-poa-${index}" onchange="handlePOASelection('owners', ${index}, this.checked)">
+                            <label for="owner-poa-${index}">${owner.name || `Chủ sở hữu ${index + 1}`}</label>
+                        </div>`;
+                    }
+                });
+                
+                html += `</div></div>`;
+                
+                // Thông tin ủy quyền
+                html += `
+                    <div class="question required">
+                        <label>Họ tên người được ủy quyền:</label>
+                        <input type="text" onchange="updatePOAField('ownerInfo', 'authorizedPerson', this.value)">
+                    </div>
+                    <div class="question required">
+                        <label>Ủy quyền có nội dung cho phép thực hiện giao dịch đang yêu cầu?</label>
+                        <select onchange="updatePOAField('ownerInfo', 'hasTransactionContent', this.value)">
+                            <option value="">-- Chọn --</option>
+                            <option value="CO">Có</option>
+                            <option value="CHUA">Chưa có</option>
+                        </select>
+                    </div>
+                    <div class="question required">
+                        <label>Thời hạn ủy quyền:</label>
+                        <select onchange="updatePOAField('ownerInfo', 'durationType', this.value)">
+                            <option value="">-- Chọn --</option>
+                            <option value="CHO_DEN_KHI_HOAN_THANH">Cho đến khi thực hiện xong</option>
+                            <option value="CHO_DEN_NGAY">Cho đến ngày...</option>
+                            <option value="KHOANG_THOI_GIAN">Xác định 1 khoảng thời hạn cụ thể</option>
+                        </select>
+                    </div>
+                    <div class="question required">
+                        <label>Loại tài sản được ghi trong ủy quyền:</label>
+                        <select onchange="updatePOAField('ownerInfo', 'propertyType', this.value)">
+                            <option value="">-- Chọn --</option>
+                            <option value="NHA_VA_DAT">Nhà và đất</option>
+                            <option value="CHI_NHA">Chỉ có nhà</option>
+                            <option value="CHI_DAT">Chỉ có đất</option>
+                        </select>
+                    </div>
+                    <div class="question required">
+                        <label>Phạm vi tài sản được ghi trong ủy quyền:</label>
+                        <select onchange="updatePOAField('ownerInfo', 'propertyScope', this.value)">
+                            <option value="">-- Chọn --</option>
+                            <option value="PHAN">Phần/1 phần</option>
+                            <option value="TOAN_BO">Toàn bộ</option>
+                        </select>
+                    </div>
+                    <div class="question required">
+                        <label>Hình thức lập văn bản ủy quyền:</label>
+                        <select onchange="updatePOAField('ownerInfo', 'form', this.value)">
+                            <option value="">-- Chọn --</option>
+                            <option value="CONG_CHUNG">Công chứng</option>
+                            <option value="CHUNG_THUC_HOP_DONG">Chứng thực hợp đồng</option>
+                            <option value="CHUNG_THUC_CHU_KY">Chứng thực chữ ký</option>
+                            <option value="CHUA_CHUNG">Chưa chứng</option>
+                        </select>
+                    </div>
+                </div>`;
+                
+                detailsDiv.innerHTML = html;
+            } else {
+                detailsDiv.innerHTML = '';
+            }
+        }
+
+        function handlePOASelection(type, index, isSelected) {
+            const array = type === 'owners' ? appState.answers.powerOfAttorney.owners : appState.answers.powerOfAttorney.spouses;
+            
+            if (isSelected) {
+                if (!array.includes(index)) array.push(index);
+            } else {
+                const pos = array.indexOf(index);
+                if (pos > -1) array.splice(pos, 1);
+            }
+        }
+
+        function updatePOAField(infoType, field, value) {
+            const target = infoType === 'ownerInfo' ? appState.answers.powerOfAttorney.ownerInfo : appState.answers.powerOfAttorney.spouseInfo;
+            
+            if (!target) {
+                if (infoType === 'ownerInfo') {
+                    appState.answers.powerOfAttorney.ownerInfo = {};
+                } else {
+                    appState.answers.powerOfAttorney.spouseInfo = {};
+                }
+            }
+            
+            if (infoType === 'ownerInfo') {
+                if (!appState.answers.powerOfAttorney.ownerInfo) {
+                    appState.answers.powerOfAttorney.ownerInfo = {};
+                }
+                appState.answers.powerOfAttorney.ownerInfo[field] = value;
+            } else {
+                if (!appState.answers.powerOfAttorney.spouseInfo) {
+                    appState.answers.powerOfAttorney.spouseInfo = {};
+                }
+                appState.answers.powerOfAttorney.spouseInfo[field] = value;
+            }
+        }
+
+        function handleSpousePowerOfAttorney(hasPOA) {
+            const detailsDiv = document.getElementById('spouse-power-of-attorney-details');
+            updateState('powerOfAttorney', hasPOA === 'CO', 'hasSpousePOA');
+            
+            if (hasPOA === 'CO') {
+                let html = '<div class="dynamic-content active">';
+                
+                // Chọn chủ sở hữu có vợ/chồng ủy quyền
+                html += `<div class="question required">
+                    <label>Chọn chủ sở hữu có vợ/chồng đã ủy quyền:</label>
+                    <div class="checkbox-group">`;
+                
+                appState.answers.owners.forEach((owner, index) => {
+                    if (owner.type === 'CA_NHAN') {
+                        html += `<div class="checkbox-item">
+                            <input type="checkbox" id="spouse-poa-${index}" onchange="handlePOASelection('spouses', ${index}, this.checked)">
+                            <label for="spouse-poa-${index}">${owner.name || `Chủ sở hữu ${index + 1}`}</label>
+                        </div>`;
+                    }
+                });
+                
+                html += `</div></div>`;
+                
+                // Thông tin ủy quyền của vợ/chồng
+                html += `
+                    <div class="question required">
+                        <label>Họ tên người được ủy quyền:</label>
+                        <input type="text" onchange="updatePOAField('spouseInfo', 'authorizedPerson', this.value)">
+                    </div>
+                    <div class="question required">
+                        <label>Ủy quyền có nội dung cho phép thực hiện giao dịch đang yêu cầu?</label>
+                        <select onchange="updatePOAField('spouseInfo', 'hasTransactionContent', this.value)">
+                            <option value="">-- Chọn --</option>
+                            <option value="CO">Có</option>
+                            <option value="CHUA">Chưa có</option>
+                        </select>
+                    </div>
+                    <div class="question required">
+                        <label>Thời hạn ủy quyền:</label>
+                        <select onchange="updatePOAField('spouseInfo', 'durationType', this.value)">
+                            <option value="">-- Chọn --</option>
+                            <option value="CHO_DEN_KHI_HOAN_THANH">Cho đến khi thực hiện xong</option>
+                            <option value="CHO_DEN_NGAY">Cho đến ngày...</option>
+                            <option value="KHOANG_THOI_GIAN">Xác định 1 khoảng thời hạn cụ thể</option>
+                        </select>
+                    </div>
+                    <div class="question required">
+                        <label>Loại tài sản được ghi trong ủy quyền:</label>
+                        <select onchange="updatePOAField('spouseInfo', 'propertyType', this.value)">
+                            <option value="">-- Chọn --</option>
+                            <option value="NHA_VA_DAT">Nhà và đất</option>
+                            <option value="CHI_NHA">Chỉ có nhà</option>
+                            <option value="CHI_DAT">Chỉ có đất</option>
+                        </select>
+                    </div>
+                    <div class="question required">
+                        <label>Phạm vi tài sản được ghi trong ủy quyền:</label>
+                        <select onchange="updatePOAField('spouseInfo', 'propertyScope', this.value)">
+                            <option value="">-- Chọn --</option>
+                            <option value="PHAN">Phần/1 phần</option>
+                            <option value="TOAN_BO">Toàn bộ</option>
+                        </select>
+                    </div>
+                    <div class="question required">
+                        <label>Hình thức lập văn bản ủy quyền:</label>
+                        <select onchange="updatePOAField('spouseInfo', 'form', this.value)">
+                            <option value="">-- Chọn --</option>
+                            <option value="CONG_CHUNG">Công chứng</option>
+                            <option value="CHUNG_THUC_HOP_DONG">Chứng thực hợp đồng</option>
+                            <option value="CHUNG_THUC_CHU_KY">Chứng thực chữ ký</option>
+                            <option value="CHUA_CHUNG">Chưa chứng</option>
+                        </select>
+                    </div>
+                </div>`;
+                
+                detailsDiv.innerHTML = html;
+            } else {
+                detailsDiv.innerHTML = '';
+            }
+        }
+
+        // ===============================
+        // GUIDANCE GENERATION - ĐẦY ĐỦ LOGIC
+        // ===============================
+        function generateGuidance() {
+            appState.guidance = [];
+            
+            // 1. Kiểm tra cơ bản - Giai đoạn A1
+            if (appState.answers.hasCertificate === 'CHUA') {
+                appState.guidance.push({
+                    type: 'error',
+                    message: 'HS KHÔNG ĐỦ ĐIỀU KIỆN ĐỂ CÔNG CHỨNG - Chưa có Giấy chứng nhận QSDĐ/QSHN'
+                });
+                displayGuidance();
+                return;
+            }
+
+            // 2. Phân tích từng chủ sở hữu
+            appState.answers.owners.forEach((owner, index) => {
+                if (owner.type === 'CA_NHAN') {
+                    analyzeIndividualOwner(owner, index);
+                } else if (owner.type === 'TO_CHUC') {
+                    analyzeOrganizationOwner(owner, index);
+                }
+            });
+            
+            // 3. Phân tích các điều kiện bổ sung
+            analyzeCivilCapacityGuidance();
+            analyzePowerOfAttorneyGuidance();
+            
+            displayGuidance();
+        }
+
+        function analyzeIndividualOwner(owner, index) {
+            const age = calculateAge(new Date(owner.birthDate));
+            const maritalStatus = appState.answers.maritalStatus[index];
+            const ownershipDate = new Date(appState.answers.ownershipDate);
+            
+            // Phân tích theo độ tuổi - B.1
+            if (age < 9) {
+                appState.guidance.push({
+                    type: 'info',
+                    message: `Chủ sở hữu ${index + 1} (${owner.name}): "Tài sản riêng" & "Người ký văn bản là Cha & Mẹ của trẻ" & "Bổ sung giấy Khai sinh trẻ & CCCD của cha mẹ trẻ"`
+                });
+            } else if (age >= 9 && age < 15) {
+                appState.guidance.push({
+                    type: 'info',
+                    message: `Chủ sở hữu ${index + 1} (${owner.name}): "Tài sản riêng" & "Người ký văn bản là Cha & Mẹ của trẻ" & "Bổ sung giấy Khai sinh trẻ & CCCD của cha mẹ trẻ & văn bản đồng ý của trẻ (được chứng nội dung)/CCCD trẻ ký chung"`
+                });
+            } else if (age >= 15 && age < 18) {
+                appState.guidance.push({
+                    type: 'info',
+                    message: `Chủ sở hữu ${index + 1} (${owner.name}): "Tài sản riêng" & "Người ký văn bản là trẻ" & "CCCD trẻ; Bổ sung giấy Khai sinh trẻ & CCCD của cha mẹ trẻ ký chung/văn bản đồng ý của cha mẹ (được chứng nội dung)"`
+                });
+            } else {
+                // Phân tích theo tình trạng hôn nhân cho người trên 18 tuổi
+                analyzeMaritalStatusForGuidance(owner, index, maritalStatus, ownershipDate);
+            }
+        }
+
+        function analyzeMaritalStatusForGuidance(owner, index, maritalStatus, ownershipDate) {
+            if (!maritalStatus || !maritalStatus.status) {
+                appState.guidance.push({
+                    type: 'warning',
+                    message: `Chủ sở hữu ${index + 1} (${owner.name}): Chưa cung cấp đầy đủ thông tin tình trạng hôn nhân`
+                });
+                return;
+            }
+            
+            switch(maritalStatus.status) {
+                case 'CHUA_TUNG_KET_HON':
+                    analyzeChuaTungKetHon(owner, index, maritalStatus, ownershipDate);
+                    break;
+                case 'DANG_CO_VO_CHONG_LAN_DAU':
+                    analyzeDangCoVoChongLanDau(owner, index, maritalStatus, ownershipDate);
+                    break;
+                case 'DANG_CO_VO_CHONG_TAI_HON':
+                    analyzeDangCoVoChongTaiHon(owner, index, maritalStatus, ownershipDate);
+                    break;
+                case 'DOC_THAN_DA_LY_HON':
+                    analyzeDocThanDaLyHon(owner, index, maritalStatus, ownershipDate);
+                    break;
+                case 'DOC_THAN_VO_CHONG_CHET':
+                    analyzeDocThanVoChongChet(owner, index, maritalStatus, ownershipDate);
+                    break;
+            }
+        }
+
+        function analyzeChuaTungKetHon(owner, index, maritalStatus, ownershipDate) {
+            // Logic từ kịch bản B.1
+            if (maritalStatus.hasXNTTHN === 'DA_CO') {
+                const xntthnDate = new Date(maritalStatus.xntthnDate);
+                const sixMonthsLater = new Date(xntthnDate);
+                sixMonthsLater.setMonth(sixMonthsLater.getMonth() + 6);
+                
+                // Kiểm tra thời hạn XNTTHN
+                if (sixMonthsLater < new Date()) {
+                    appState.guidance.push({
+                        type: 'warning',
+                        message: `Chủ sở hữu ${index + 1} (${owner.name}): "nếu XNTTHN quá 6 tháng thì phải làm lại"`
+                    });
+                }
+                
+                if (maritalStatus.xntthnContent === 'CHI_HIEN_TAI') {
+                    appState.guidance.push({
+                        type: 'info',
+                        message: `Chủ sở hữu ${index + 1} (${owner.name}): "Tài sản riêng của ${owner.name}" & "xuất trình CCCD & Giấy XNTTHN"`
+                    });
+                } else if (maritalStatus.xntthnContent === 'VUA_CO_KHOANG_THOI_GIAN') {
+                    appState.guidance.push({
+                        type: 'warning',
+                        message: `Chủ sở hữu ${index + 1} (${owner.name}): "cần xác nhận TTHN cho toàn bộ thời gian từ khi đủ tuổi kết hôn đến nay, nếu chưa đủ"`
+                    });
+                }
+            } else {
+                appState.guidance.push({
+                    type: 'warning',
+                    message: `Chủ sở hữu ${index + 1} (${owner.name}): "bổ sung giấy xác nhận TTHN kể từ khi đủ tuổi kết hôn cho đến nay, để được hướng dẫn cụ thể hơn"`
+                });
+            }
+        }
+
+        function analyzeDangCoVoChongLanDau(owner, index, maritalStatus, ownershipDate) {
+            if (maritalStatus.hasGCNKH && maritalStatus.effectiveDate) {
+                const effectiveDate = new Date(maritalStatus.effectiveDate);
+                
+                if (effectiveDate <= ownershipDate) {
+                    appState.guidance.push({
+                        type: 'info',
+                        message: `Chủ sở hữu ${index + 1} (${owner.name}): "Tài sản chung với Vợ/chồng" & "CCCD của ${owner.name} và ${maritalStatus.spouseName}, ký chung"`
+                    });
+                } else if (effectiveDate > ownershipDate && !maritalStatus.hasXNTTTHN) {
+                    appState.guidance.push({
+                        type: 'warning',
+                        message: `Chủ sở hữu ${index + 1} (${owner.name}): "CHƯA ĐỦ CƠ SỞ XÁC ĐỊNH TÌNH TRẠNG SỞ HỮU" & "CẦN BỔ SUNG bổ sung lại XNTTHN do thiếu thời gian từ ${formatDate(effectiveDate)} đến ${formatDate(ownershipDate)}"`
+                    });
+                } else if (effectiveDate > ownershipDate && maritalStatus.hasXNTTTHN) {
+                    const xntthnDate = new Date(maritalStatus.xntthnDate2);
+                    const sixMonthsLater = new Date(xntthnDate);
+                    sixMonthsLater.setMonth(sixMonthsLater.getMonth() + 6);
+                    
+                    if (sixMonthsLater < new Date()) {
+                        appState.guidance.push({
+                            type: 'warning',
+                            message: `Chủ sở hữu ${index + 1} (${owner.name}): "nếu XNTTHN quá 6 tháng thì phải làm lại"`
+                        });
+                    }
+                    
+                    if (maritalStatus.xntthnContent2 === 'CHI_HIEN_TAI') {
+                        appState.guidance.push({
+                            type: 'info',
+                            message: `Chủ sở hữu ${index + 1} (${owner.name}): "Tài sản riêng" & "xuất trình CCCD & Giấy XNTTHN & Giấy kết hôn"`
+                        });
+                    } else if (maritalStatus.xntthnContent2 === 'VUA_CO_KHOANG_THOI_GIAN') {
+                        appState.guidance.push({
+                            type: 'warning',
+                            message: `Chủ sở hữu ${index + 1} (${owner.name}): "cần xác nhận TTHN cho toàn bộ thời gian từ khi đủ tuổi kết hôn đến nay, nếu chưa đủ"`
+                        });
+                    }
+                }
+            }
+            
+            if (maritalStatus.hasNoDocs) {
+                appState.guidance.push({
+                    type: 'warning',
+                    message: `Chủ sở hữu ${index + 1} (${owner.name}): "Phải bổ sung Giấy kết hôn & XNTTHN (nếu cần) để được hướng dẫn cụ thể hơn"`
+                });
+            }
+        }
+
+        function analyzeDangCoVoChongTaiHon(owner, index, maritalStatus, ownershipDate) {
+            const effectiveDate = maritalStatus.currentMarriageEffectiveDate ? new Date(maritalStatus.currentMarriageEffectiveDate) : null;
+            const divorceDate = maritalStatus.divorceDate ? new Date(maritalStatus.divorceDate) : null;
+            const deathDate = maritalStatus.exSpouseDeathDate ? new Date(maritalStatus.exSpouseDeathDate) : null;
+            
+            if (maritalStatus.hasCurrentGCNKH && effectiveDate) {
+                if (effectiveDate <= ownershipDate) {
+                    appState.guidance.push({
+                        type: 'info',
+                        message: `Chủ sở hữu ${index + 1} (${owner.name}): "Tài sản chung với Vợ/chồng" & "CCCD của ${owner.name} và ${maritalStatus.currentSpouseName}, ký chung"`
+                    });
+                } else if (effectiveDate > ownershipDate) {
+                    const eventDate = divorceDate || deathDate;
+                    if (eventDate && eventDate < ownershipDate) {
+                        appState.guidance.push({
+                            type: 'info',
+                            message: `Chủ sở hữu ${index + 1} (${owner.name}): "KHẢ NĂNG Tài sản riêng" & "xuất trình CCCD ${owner.name} & Giấy XNTTHN cho thời điểm trước kết hôn & Giấy kết hôn ĐỂ CHỨNG MINH"`
+                        });
+                    } else if (eventDate && eventDate >= ownershipDate) {
+                        appState.guidance.push({
+                            type: 'info',
+                            message: `Chủ sở hữu ${index + 1} (${owner.name}): "KHẢ NĂNG Tài sản chung với vợ/chồng cũ" & "xuất trình thêm CCCD vợ/chồng cũ ký chung hoặc phân chia di sản của vợ chồng cũ để cùng các thừa kế ký chung"`
+                        });
+                    }
+                }
+            }
+            
+            // Xử lý logic cho XNTTHN trước kết hôn
+            if (maritalStatus.hasPreMarriageXNTTTHN) {
+                const xntthnDate = new Date(maritalStatus.preMarriageXNTTHNDate);
+                const sixMonthsLater = new Date(xntthnDate);
+                sixMonthsLater.setMonth(sixMonthsLater.getMonth() + 6);
+                
+                if (sixMonthsLater < new Date()) {
+                    appState.guidance.push({
+                        type: 'warning',
+                        message: `Chủ sở hữu ${index + 1} (${owner.name}): "nếu XNTTHN quá 6 tháng thì phải làm lại"`
+                    });
+                }
+                
+                if (maritalStatus.preMarriageTimeFromEvent === 'KHONG') {
+                    appState.guidance.push({
+                        type: 'warning',
+                        message: `Chủ sở hữu ${index + 1} (${owner.name}): "Phải xác nhận thêm TTHN đối với khoảng thời gian còn lại, để chứng minh KHẢ NĂNG tài sản/chung riêng là ĐÚNG"`
+                    });
+                } else if (maritalStatus.preMarriageTimeFromEvent === 'CO') {
+                    appState.guidance.push({
+                        type: 'info',
+                        message: `Chủ sở hữu ${index + 1} (${owner.name}): "KHẢ NĂNG tài sản/chung riêng là ĐÚNG"`
+                    });
+                }
+            }
+            
+            // Xử lý trường hợp chỉ có XNTTHN
+            if (maritalStatus.hasPreMarriageXNTTTHN && !maritalStatus.hasCurrentGCNKH && !maritalStatus.hasNoDocsTaiHon) {
+                // Logic tương tự như trên nhưng yêu cầu bổ sung giấy kết hôn
+                appState.guidance.push({
+                    type: 'warning',
+                    message: `Chủ sở hữu ${index + 1} (${owner.name}): "bổ sung giấy chứng nhận kết hôn"`
+                });
+            }
+        }
+
+        function analyzeDocThanDaLyHon(owner, index, maritalStatus, ownershipDate) {
+            const divorceDate = maritalStatus.divorceDate_LyHon ? new Date(maritalStatus.divorceDate_LyHon) : 
+                              maritalStatus.divorceDateInXNTTHN ? new Date(maritalStatus.divorceDateInXNTTHN) : null;
+            
+            if (maritalStatus.hasXNTTHN_LyHon === 'CHUA_CO') {
+                if (divorceDate >= ownershipDate) {
+                    appState.guidance.push({
+                        type: 'info',
+                        message: `Chủ sở hữu ${index + 1} (${owner.name}): "Tài sản chung với Vợ/chồng cũ" & "CCCD của ${owner.name} và ${maritalStatus.exSpouseName_LyHon}, ký chung" & "Phải bổ sung Giấy XNTTHN để được hướng dẫn cụ thể hơn"`
+                    });
+                } else if (divorceDate < ownershipDate) {
+                    appState.guidance.push({
+                        type: 'info',
+                        message: `Chủ sở hữu ${index + 1} (${owner.name}): "CÓ THỂ là tài sản riêng" & "xuất trình CCCD & Giấy XNTTHN" & "Phải bổ sung Giấy XNTTHN để được hướng dẫn cụ thể hơn"`
+                    });
+                }
+            } else if (maritalStatus.hasXNTTHN_LyHon === 'DA_CO') {
+                const xntthnDate = new Date(maritalStatus.xntthnDate_LyHon);
+                const sixMonthsLater = new Date(xntthnDate);
+                sixMonthsLater.setMonth(sixMonthsLater.getMonth() + 6);
+                
+                if (sixMonthsLater < new Date()) {
+                    appState.guidance.push({
+                        type: 'warning',
+                        message: `Chủ sở hữu ${index + 1} (${owner.name}): "nếu XNTTHN quá 6 tháng thì phải làm lại"`
+                    });
+                }
+                
+                if (divorceDate >= ownershipDate) {
+                    appState.guidance.push({
+                        type: 'info',
+                        message: `Chủ sở hữu ${index + 1} (${owner.name}): "Tài sản chung với Vợ/chồng cũ" & "CCCD của ${owner.name} và ${maritalStatus.exSpouseNameInXNTTHN}, ký chung"`
+                    });
+                } else if (divorceDate < ownershipDate && ownershipDate <= xntthnDate) {
+                    appState.guidance.push({
+                        type: 'info',
+                        message: `Chủ sở hữu ${index + 1} (${owner.name}): "Tài sản riêng" & "xuất trình CCCD & Giấy XNTTHN"`
+                    });
+                } else if (divorceDate < xntthnDate && xntthnDate < ownershipDate) {
+                    appState.guidance.push({
+                        type: 'warning',
+                        message: `Chủ sở hữu ${index + 1} (${owner.name}): "CHƯA ĐỦ CƠ SỞ XÁC ĐỊNH TÌNH TRẠNG SỞ HỮU" & "CẦN BỔ SUNG bổ sung lại XNTTHN do thiếu thời gian từ ${formatDate(xntthnDate)} đến ${formatDate(ownershipDate)}"`
+                    });
+                }
+                
+                if (maritalStatus.xntthnTimeFromDivorce === 'KHONG') {
+                    appState.guidance.push({
+                        type: 'warning',
+                        message: `Chủ sở hữu ${index + 1} (${owner.name}): "Phải xác nhận thêm TTHN đối với khoảng thời gian còn lại"`
+                    });
+                }
+            }
+            
+            if (maritalStatus.isPropertyWithExSpouse === 'CO') {
+                appState.guidance.push({
+                    type: 'info',
+                    message: `Chủ sở hữu ${index + 1} (${owner.name}): "Phải có sự tham dự/ủy quyền của vợ chồng cũ, nếu án ly hôn không chia tài sản này cho người đứng tên trên GCN"`
+                });
+            }
+        }
+
+        function analyzeDocThanVoChongChet(owner, index, maritalStatus, ownershipDate) {
+            const deathDate = maritalStatus.spouseDeathDate ? new Date(maritalStatus.spouseDeathDate) : 
+                            maritalStatus.deathDateInXNTTHN ? new Date(maritalStatus.deathDateInXNTTHN) : null;
+            
+            if (maritalStatus.hasXNTTHN_Chet === 'CHUA_CO') {
+                if (deathDate >= ownershipDate) {
+                    appState.guidance.push({
+                        type: 'info',
+                        message: `Chủ sở hữu ${index + 1} (${owner.name}): "Tài sản chung với Vợ/chồng cũ" & "phải phân chia di sản, đăng ký sở hữu & ký chung với các thừa kế" & "Phải bổ sung Giấy XNTTHN để được hướng dẫn cụ thể hơn"`
+                    });
+                } else if (deathDate < ownershipDate) {
+                    appState.guidance.push({
+                        type: 'info',
+                        message: `Chủ sở hữu ${index + 1} (${owner.name}): "CÓ THỂ là Tài sản riêng của ${owner.name}" & "xuất trình CCCD & Giấy XNTTHN" & "Phải bổ sung Giấy XNTTHN để được hướng dẫn cụ thể hơn"`
+                    });
+                }
+            } else if (maritalStatus.hasXNTTHN_Chet === 'DA_CO') {
+                const xntthnDate = new Date(maritalStatus.xntthnDate_Chet);
+                const sixMonthsLater = new Date(xntthnDate);
+                sixMonthsLater.setMonth(sixMonthsLater.getMonth() + 6);
+                
+                if (sixMonthsLater < new Date()) {
+                    appState.guidance.push({
+                        type: 'warning',
+                        message: `Chủ sở hữu ${index + 1} (${owner.name}): "nếu XNTTHN quá 6 tháng thì phải làm lại"`
+                    });
+                }
+                
+                if (deathDate >= ownershipDate) {
+                    appState.guidance.push({
+                        type: 'info',
+                        message: `Chủ sở hữu ${index + 1} (${owner.name}): "Tài sản chung với Vợ/chồng cũ" & "phải phân chia di sản, đăng ký sở hữu & ký chung với các thừa kế"`
+                    });
+                } else if (deathDate < ownershipDate && ownershipDate <= xntthnDate) {
+                    appState.guidance.push({
+                        type: 'info',
+                        message: `Chủ sở hữu ${index + 1} (${owner.name}): "Tài sản riêng của ${owner.name}" & "xuất trình CCCD & Giấy XNTTHN"`
+                    });
+                } else if (deathDate < xntthnDate && xntthnDate < ownershipDate) {
+                    appState.guidance.push({
+                        type: 'warning',
+                        message: `Chủ sở hữu ${index + 1} (${owner.name}): "CHƯA ĐỦ CƠ SỞ XÁC ĐỊNH TÌNH TRẠNG SỞ HỮU" & "CẦN BỔ SUNG bổ sung lại XNTTHN do thiếu thời gian từ ${formatDate(xntthnDate)} đến ${formatDate(ownershipDate)}"`
+                    });
+                }
+                
+                if (maritalStatus.xntthnTimeFromDeath === 'KHONG') {
+                    appState.guidance.push({
+                        type: 'warning',
+                        message: `Chủ sở hữu ${index + 1} (${owner.name}): "Phải xác nhận thêm TTHN đối với khoảng thời gian còn lại"`
+                    });
+                }
+            }
+        }
+
+        function analyzeOrganizationOwner(owner, index) {
+            const orgInfo = appState.answers.organizationInfo[index];
+            
+            if (orgInfo) {
+                // B.3.1 - Người ký văn bản
+                if (orgInfo.signatory === 'DAI_DIEN_PHAP_LUAT') {
+                    appState.guidance.push({
+                        type: 'info',
+                        message: `Tổ chức ${owner.orgName}: "CCCD của người đại diện theo pháp luật + con dấu để trực tiếp ký, đóng dấu"`
+                    });
+                } else if (orgInfo.signatory === 'DAI_DIEN_UY_QUYEN') {
+                    appState.guidance.push({
+                        type: 'info',
+                        message: `Tổ chức ${owner.orgName}: "CCCD của người đại diện theo ủy quyền & Văn bản ủy quyền từ người đại diện theo pháp luật có nội dung phù hợp với giao dịch yêu cầu + dấu + Quyết định bổ nhiệm"`
+                    });
+                }
+                
+                // B.3.3 - Phê duyệt nội bộ
+                if (orgInfo.approval === 'CHUA_CO') {
+                    appState.guidance.push({
+                        type: 'warning',
+                        message: `Tổ chức ${owner.orgName}: "Cần bổ sung Biên bản/quyết định, tùy thuộc phân cấp thẩm quyền cho phép thực hiện giao dịch của cấp có thẩm quyền_cần liên hệ trực tiếp để được hướng dẫn cụ thể"`
+                    });
+                } else if (orgInfo.approval === 'DA_CO') {
+                    appState.guidance.push({
+                        type: 'info',
+                        message: `Tổ chức ${owner.orgName}: "Cần liên hệ trực tiếp để hướng dẫn/xem xét về thẩm quyền thông qua biên bản/quyết định đã phù hợp chưa"`
+                    });
+                }
+            }
+        }
+
+        function analyzeCivilCapacityGuidance() {
+            const civilCapacity = appState.answers.civilCapacity;
+            
+            // B.2.1 và B.2.3 - Kiểm tra tặng cho với người mất NLHV
+            if (civilCapacity.transactionType === 'TANG_CHO') {
+                if (civilCapacity.ownersLostCapacity.length > 0) {
+                    appState.guidance.push({
+                        type: 'error',
+                        message: 'B.2.1: "không được phép tặng cho tài sản của người được giám hộ → TỪ CHỐI HỒ SƠ"'
+                    });
+                }
+                
+                if (civilCapacity.spousesLostCapacity.length > 0) {
+                    appState.guidance.push({
+                        type: 'error',
+                        message: 'B.2.3: "không được phép tặng cho tài sản của người được giám hộ, nếu vợ/chồng được xác định phải ký chung → TỪ CHỐI HỒ SƠ"'
+                    });
+                }
+            }
+            
+            // B.2.2 - Xử lý giám hộ cho chủ sở hữu
+            if (civilCapacity.ownersLostCapacity.length > 0 && civilCapacity.transactionType !== 'TANG_CHO') {
+                civilCapacity.ownersLostCapacity.forEach(ownerIndex => {
+                    const owner = appState.answers.owners[ownerIndex];
+                    const docs = civilCapacity.ownerDocuments;
+                    
+                    if (docs.hasGuardianCert === 'CHUA') {
+                        appState.guidance.push({
+                            type: 'warning',
+                            message: `Chủ sở hữu ${owner.name}: "liên hệ với UBND để bổ sung Trích lục đăng ký giám hộ"`
+                        });
+                    }
+                    
+                    if (docs.hasSupervisorCert === 'CHUA') {
+                        appState.guidance.push({
+                            type: 'warning',
+                            message: `Chủ sở hữu ${owner.name}: "liên hệ với UBND để bổ sung Trích lục đăng ký giám sát giám hộ"`
+                        });
+                    }
+                    
+                    if (docs.hasGuardianAgreement === 'CHUA') {
+                        appState.guidance.push({
+                            type: 'warning',
+                            message: `Chủ sở hữu ${owner.name}: "Cần bổ sung Văn bản đồng ý, KHÔNG ĐƯỢC PHÉP CHỨNG THỰC CHỮ KÝ - hoặc Bổ sung CCCD người giám sát lên ký chung"`
+                        });
+                    } else if (docs.hasGuardianAgreement === 'CO') {
+                        if (docs.agreementForm === 'CONG_CHUNG') {
+                            appState.guidance.push({
+                                type: 'info',
+                                message: `Chủ sở hữu ${owner.name}: "Bổ sung CCCD Người giám hộ; Người giám hộ ký thay cho ${owner.name} & đã có văn bản đồng ý của người giám sát giám hộ"`
+                            });
+                        } else if (docs.agreementForm === 'CHUNG_THUC_CHU_KY' || docs.agreementForm === 'CHUA_CHUNG') {
+                            appState.guidance.push({
+                                type: 'warning',
+                                message: `Chủ sở hữu ${owner.name}: "Cần bổ sung Văn bản đồng ý được công chứng/chứng thực nội dung - hoặc Bổ sung CCCD người giám hộ & CCCD của người giám sát giám hộ ký chung" & "(người giám hộ ký thay cho ${owner.name})"`
+                            });
+                        }
+                    }
+                });
+            }
+            
+            // B.2.4 - Xử lý giám hộ cho vợ/chồng chủ sở hữu (tương tự B.2.2)
+            if (civilCapacity.spousesLostCapacity.length > 0 && civilCapacity.transactionType !== 'TANG_CHO') {
+                // Logic tương tự B.2.2 nhưng cho vợ/chồng
+                appState.guidance.push({
+                    type: 'info',
+                    message: 'Áp dụng hướng dẫn tương tự B.2.2 cho trường hợp vợ/chồng chủ sở hữu bị mất năng lực hành vi'
+                });
+            }
+            
+            // B.2.5 - Trường hợp không có mất NLHV
+            if (civilCapacity.ownersLostCapacity.length === 0 && civilCapacity.spousesLostCapacity.length === 0) {
+                appState.guidance.push({
+                    type: 'info',
+                    message: 'B.2.5: "Người được xác định theo Hướng dẫn này sẽ ký văn bản"'
+                });
+            }
+        }
+
+        function analyzePowerOfAttorneyGuidance() {
+            const poa = appState.answers.powerOfAttorney;
+            
+            // B.4.1 - 4.12: Xử lý ủy quyền
+            if (poa.owners.length === 0) {
+                appState.guidance.push({
+                    type: 'info',
+                    message: 'B.4.1: "Chính chủ thể trực tiếp ký văn bản"'
+                });
+            } else {
+                appState.guidance.push({
+                    type: 'info',
+                    message: 'B.4.2: "Cần xem xét nội dung Ủy quyền"'
+                });
+                
+                if (poa.ownerInfo.hasTransactionContent === 'CHUA') {
+                    appState.guidance.push({
+                        type: 'warning',
+                        message: 'B.4.3: "Bổ sung lại UQ hoặc chủ sở hữu_đã ủy quyền trực tiếp ký văn bản"'
+                    });
+                } else if (poa.ownerInfo.hasTransactionContent === 'CO') {
+                    appState.guidance.push({
+                        type: 'info',
+                        message: 'B.4.4: "Nội dung công việc hợp lệ"'
+                    });
+                }
+                
+                if (poa.ownerInfo.durationType === 'CHO_DEN_KHI_HOAN_THANH') {
+                    appState.guidance.push({
+                        type: 'info',
+                        message: 'B.4.5: "Thời hạn Ủy quyền hợp lệ"'
+                    });
+                } else if (poa.ownerInfo.durationType === 'CHO_DEN_NGAY' || poa.ownerInfo.durationType === 'KHOANG_THOI_GIAN') {
+                    appState.guidance.push({
+                        type: 'warning',
+                        message: 'B.4.6: "Nếu thời hạn đã hết thì chủ sở hữu phải trực tiếp ký văn bản"'
+                    });
+                }
+                
+                if (poa.ownerInfo.propertyScope === 'PHAN') {
+                    appState.guidance.push({
+                        type: 'info',
+                        message: 'B.4.7: "Phải đối chiếu với phạm vi yêu cầu giao dịch"'
+                    });
+                } else if (poa.ownerInfo.propertyScope === 'TOAN_BO') {
+                    appState.guidance.push({
+                        type: 'info',
+                        message: 'B.4.8: "Phạm vi tài sản được ủy quyền hợp lệ"'
+                    });
+                }
+                
+                if (poa.ownerInfo.form === 'CHUNG_THUC_HOP_DONG') {
+                    appState.guidance.push({
+                        type: 'info',
+                        message: 'B.4.9: "kiểm tra tính hợp pháp của văn bản chứng thực"'
+                    });
+                } else if (poa.ownerInfo.form === 'CHUNG_THUC_CHU_KY') {
+                    appState.guidance.push({
+                        type: 'warning',
+                        message: 'B.4.10: "Văn bản ủy quyền không hợp lệ, yêu cầu chủ sở hữu ký"'
+                    });
+                } else if (poa.ownerInfo.form === 'CHUA_CHUNG') {
+                    appState.guidance.push({
+                        type: 'warning',
+                        message: 'B.4.11: "yêu cầu chủ sở hữu ký"'
+                    });
+                } else if (poa.ownerInfo.form === 'CONG_CHUNG') {
+                    appState.guidance.push({
+                        type: 'info',
+                        message: 'B.4.12: "Người được ủy quyền sẽ được phép ký thay cho chủ sở hữu_đã ủy quyền khi công việc-thời hạn- loại tài sản- phạm vi tài sản hợp lệ"'
+                    });
+                }
+            }
+            
+            // Xử lý tương tự cho ủy quyền của vợ/chồng
+            if (poa.spouses.length > 0) {
+                appState.guidance.push({
+                    type: 'info',
+                    message: 'Áp dụng hướng dẫn tương tự B.4.1-4.12 cho trường hợp ủy quyền của vợ/chồng chủ sở hữu'
+                });
+            }
+        }
+
+        function calculateAge(birthDate) {
+            if (!birthDate) return 0;
+            const today = new Date();
+            const birth = new Date(birthDate);
+            let age = today.getFullYear() - birth.getFullYear();
+            const monthDiff = today.getMonth() - birth.getMonth();
+            
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+                age--;
+            }
+            return age;
+        }
+
+        function formatDate(date) {
+            if (!date) return '';
+            return date.toLocaleDateString('vi-VN');
+        }
+
+        function displayGuidance() {
+            const questionPhase = document.getElementById('question-phase');
+            const guidancePhase = document.getElementById('guidance-phase');
+            const resultsDiv = document.getElementById('guidance-results');
+            
+            questionPhase.style.display = 'none';
+            guidancePhase.style.display = 'block';
+            
+            resultsDiv.innerHTML = '';
+            
+            if (appState.guidance.length === 0) {
+                resultsDiv.innerHTML = '<div class="guidance-item info">Không có hướng dẫn cụ thể. Vui lòng kiểm tra lại thông tin đã nhập.</div>';
+                return;
+            }
+            
+            appState.guidance.forEach(item => {
+                const div = document.createElement('div');
+                div.className = `guidance-item ${item.type}`;
+                div.innerHTML = item.message;
+                resultsDiv.appendChild(div);
+            });
+            
+            // Cập nhật step indicator
+            document.getElementById('step-B').classList.add('active');
+        }
+
+        function showQuestionPhase() {
+            document.getElementById('question-phase').style.display = 'block';
+            document.getElementById('guidance-phase').style.display = 'none';
+            showSection('A1');
+        }
+
+        function resetApp() {
+            if (confirm('Bạn có chắc chắn muốn làm lại từ đầu? Toàn bộ thông tin đã nhập sẽ bị mất.')) {
+                location.reload();
+            }
+        }
+
+        // ===============================
+        // INITIALIZATION
+        // ===============================
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgress();
+        });
+    </script>
+</body>
+</html>
